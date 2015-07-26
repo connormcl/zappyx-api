@@ -6,7 +6,11 @@ Rails.application.routes.draw do
   root 'api#pushTest'
 
   get 'api/pushTest'
-  post 'api/push'
+  post 'api/send_image'
+
+  post 'api/signup' => 'auth#signup'
+
+  post 'auth' => 'auth#authenticate'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

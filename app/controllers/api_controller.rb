@@ -1,5 +1,3 @@
-#require 'houston'
-
 class ApiController < ApplicationController
   # Environment variables are automatically read, or can be overridden by any specified options. You can also
   # conveniently use `Houston::Client.development` or `Houston::Client.production`.
@@ -7,7 +5,7 @@ class ApiController < ApplicationController
   APN.certificate = File.read("/Users/connor/Documents/ios-apps-important-files/pushchat/ck.pem")
   APN.passphrase = "Pau1gibson*"
 
-  def push
+  def send_image
     # An example of the token sent back when a device registers for notifications
     token = "<190062ee 43d20a01 f9b5abbc 70f4017b 39eeeced c629f562 4b9c4f09 8f0c99f4>"
 
