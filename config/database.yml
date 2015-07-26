@@ -80,6 +80,7 @@ test:
 #
 production:
   <<: *default
-  database: pushchat_production
-  username: pushchat
-  password: <%= ENV['PUSHCHAT_DATABASE_PASSWORD'] %>
+  database: pushchat
+  username: steve
+  password:
+  # password: <%= ENV['PUSHCHAT_DATABASE_PASSWORD'] %>
