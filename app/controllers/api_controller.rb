@@ -22,7 +22,7 @@ class ApiController < ApplicationController
 
     # And... sent! That's all it takes.
     APN.push(notification)
-    redirect_to action: "pushTest"
+    render json: { sent: 'true' }
   end
 
   def pushTest

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   post 'api/send_image'
 
   post 'api/signup' => 'auth#signup'
+  post 'api/delete_account' => 'auth#delete_user'
 
   post 'auth' => 'auth#authenticate'
 

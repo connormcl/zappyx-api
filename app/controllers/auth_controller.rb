@@ -11,6 +11,15 @@ class AuthController < ApplicationController
     end
   end
 
+  def delete_user
+    deleted_user = @current_user
+    if @current_user.destroy
+      render json: { user: deleted_user }
+    else
+      render json: { error: 'Failed to delete user' }
+    end
+  end
+
   def authenticate
     user = User.find_by_credentials(params[:email], params[:password])
     if user
