@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   root 'api#pushTest'
 
   get 'api/pushTest'
-  post 'api/send_image'
+  post 'api/send_photo'
 
   post 'api/signup' => 'auth#signup'
   post 'api/delete_account' => 'auth#delete_user'

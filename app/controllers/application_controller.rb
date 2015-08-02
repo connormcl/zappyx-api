@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   require 'auth_token.rb'
+  require 'custom_errors.rb'
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
@@ -8,11 +9,11 @@ class ApplicationController < ActionController::Base
   before_action :set_current_user, :authenticate_request, :except => [:pushTest, :authenticate, :signup]
 
   # rescue_from NotAuthenticatedError do
-  rescue_from StandardError do
+  rescue_from NotAuthenticatedError do
     render json: { error: 'Not Authorized' }, status: :unauthorized
   end
   # rescue_from AuthenticationTimeoutError do
-  rescue_from StandardError do
+  rescue_from AuthenticationTimeoutError do
     render json: { error: 'Auth token is expired' }, status: 419 # unofficial timeout status code
   end
 
@@ -29,10 +30,10 @@ class ApplicationController < ActionController::Base
   def authenticate_request
     if auth_token_expired?
       # fail AuthenticationTimeoutError
-      fail StandardError
+      fail AuthenticationTimeoutError
     elsif !@current_user
       # fail NotAuthenticatedError
-      fail StandardError
+      fail NotAuthenticatedError
     end
   end
 
@@ -56,7 +57,4 @@ class ApplicationController < ActionController::Base
       end
     end
   end
-
-  class NotAuthenticatedError < StandardError; end
-  class AuthenticationTimeoutError < StandardError; end
 end

@@ -5,25 +5,68 @@ class ApiController < ApplicationController
   APN.certificate = File.read(Rails.root.join('app', 'assets', ENV["apn_certificate_name"]))
   APN.passphrase = ENV["apn_passphrase"]
 
-  def send_image
+  def send_photo
+    if params[:photo] == nil
+      render json: { error: 'no photo attached' }
+      return
+    end
+    if params[:recipient_id] == nil
+      render json: { error: 'no recipient specified' }
+      return
+    end
+    uploads = "#{Rails.root}/public/uploads"
+    FileUtils.mkdir_p(uploads) unless File.directory?(uploads)
+
+    uploaded_io = params[:photo]
+    photo = Photo.create({sender_id: @current_user.id, recipient_id: params[:recipient_id]})
+    extension = "." + uploaded_io.content_type.split("/").last
+    photo.update_attributes({path: Rails.root.join('public','uploads',photo.id.to_s + extension), filename: photo.id.to_s + extension})
+    File.open(Rails.root.join('public', 'uploads', photo.path), 'wb') do |file|
+      file.write(uploaded_io.read)
+    end
+
+    recipient = User.find(photo.recipient_id)
     # An example of the token sent back when a device registers for notifications
-    token = "<190062ee 43d20a01 f9b5abbc 70f4017b 39eeeced c629f562 4b9c4f09 8f0c99f4>"
+    device_token = recipient.device_token
+    # token = "<190062ee 43d20a01 f9b5abbc 70f4017b 39eeeced c629f562 4b9c4f09 8f0c99f4>"
 
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = "from Connor McLaughlin"
+    notification = Houston::Notification.new(device: device_token)
+    notification.alert = "from " + @current_user.first_name + " " + @current_user.last_name
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = 57
+    notification.badge = 1
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
-    notification.custom_data = {foo: "bar"}
+    # notification.custom_data = {foo: "bar"}
 
     # And... sent! That's all it takes.
     APN.push(notification)
     render json: { sent: 'true' }
   end
+
+  # def upload_photo
+  #   if params[:photo] == nil
+  #     render json: { error: 'no photo attached' }
+  #     return
+  #   end
+  #   if params[:recipient_id] == nil
+  #     render json: { error: 'no recipient specified' }
+  #     return
+  #   end
+  #   uploads = "#{Rails.root}/public/uploads"
+  #   FileUtils.mkdir_p(uploads) unless File.directory?(uploads)
+
+  #   uploaded_io = params[:photo]
+  #   photo = Photo.create({sender_id: @current_user.id, recipient_id: params[:recipient_id]})
+  #   extension = "." + uploaded_io.content_type.split("/").last
+  #   photo.update_attributes({path: Rails.root.join('public','uploads',photo.id.to_s + extension), filename: photo.id.to_s + extension})
+  #   File.open(Rails.root.join('public', 'uploads', photo.path), 'wb') do |file|
+  #     file.write(uploaded_io.read)
+  #   end
+  #   render json: { uploaded: 'true' }
+  # end
 
   def pushTest
   end
