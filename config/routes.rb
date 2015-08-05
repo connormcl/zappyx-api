@@ -9,7 +9,8 @@ Rails.application.routes.draw do
 
   # protected routes
   get 'api/unopened_photos'
-  get 'api/load_photo'
+  get 'api/get_photo'
+  get 'api/get_users'
   post 'api/send_photo'
   post 'api/delete_account' => 'auth#delete_user'
 end

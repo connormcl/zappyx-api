@@ -51,7 +51,7 @@ class ApiController < ApplicationController
     render json: { unopened_photos: @current_user.unopened_photos }
   end
 
-  def load_photo
+  def get_photo
     if params[:photo_id] == nil
       render json: { error: 'no photo id provided' }
       return
@@ -64,6 +64,10 @@ class ApiController < ApplicationController
 
     photo = Photo.find(params[:photo_id])
     send_file photo.path, :type => photo.content_type, :disposition => 'inline'
+  end
+
+  def get_users
+    render json: { users: User.all }
   end
 
   def index
